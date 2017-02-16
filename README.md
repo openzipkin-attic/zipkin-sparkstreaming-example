@@ -1,8 +1,8 @@
 # zipkin-sparkstreaming custom adjuster example
 
-This example shows how to make a custom adjuster for zipkin-sparkstreaming.
+This example shows how to add a custom adjuster for zipkin-sparkstreaming.
 We'll create a jar with a simple adjuster that trims the length of binary annotation values.
-This adjuster jar can be used by placing it in the class path of the spark job.
+This adjuster will be applied by placing it in the class path of the spark job.
 
 ## Steps for creating an adjuster jar
 
@@ -25,7 +25,7 @@ src/main/resources/META-INF/spring.factories
 ```
 mvn clean package
 ```
-## Running the job
+## Running adjuster jar with the job
 
 Download spark-streaming jar
 ```
@@ -33,7 +33,8 @@ wget -O zipkin-sparkstreaming-job.jar 'https://search.maven.org/remote_content?g
 ```
 
 Run the job by adding adjuster jar to the classpath.
-Note: We'll can't run the job with -jar flag. [If we use this flag, -cp option is ignored](http://stackoverflow.com/questions/16505992/annotation-scan-not-scanning-external-jars-in-classpath).
+
+**Note** We'll can't run the job with -jar flag. [If we use this flag, -cp option is ignored](http://stackoverflow.com/questions/16505992/annotation-scan-not-scanning-external-jars-in-classpath).
 ```
 java -cp "zipkin-sparkstreaming-job.jar:zipkin-sparkstreaming-example-*.jar" \
   zipkin.sparkstreaming.job.ZipkinSparkStreamingJob \
