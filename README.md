@@ -1,26 +1,7 @@
 # zipkin-sparkstreaming custom adjuster example
 
-This example shows how to add a custom adjuster for zipkin-sparkstreaming.
-We'll create a jar with a simple adjuster that trims the length of binary annotation values.
-This adjuster will be applied by placing it in the class path of the spark job.
+Adjusters are used to clean or change data that goes into zipkin, such that it is more usable. For the sake of example, we assume you have an application adding very large tags in trace data. These slow down the UI and eat up more storage. This is an example adjuster for the spark streaming job, which truncates tags to a configured length.
 
-## Steps for creating an adjuster jar
-
-1. Create a java source file that..
-  * extends `zipkin.sparkstreaming.Adjuster`
-  * has an annotation `org.springframework.context.annotation.Configuration`
-2. Create a resource file `META-INF/spring.factories` that contains
-```
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-your.package.FooAdjuster
-```
-3. Put compiled class and `META-INF/spring.factories` into a jar.
-
-In maven, the following structure would accomplish this.
-```
-src/main/java/your/package/FooAdjuster.java
-src/main/resources/META-INF/spring.factories
-```
 ## Building example
 ```
 mvn clean package
@@ -34,7 +15,7 @@ wget -O zipkin-sparkstreaming-job.jar 'https://search.maven.org/remote_content?g
 
 Run the job by adding adjuster jar to the classpath.
 
-**Note** We'll can't run the job with -jar flag. [If we use this flag, -cp option is ignored](http://stackoverflow.com/questions/16505992/annotation-scan-not-scanning-external-jars-in-classpath).
+**Note** We can't run the job with -jar flag. [If we use this flag, -cp option is ignored](http://stackoverflow.com/questions/16505992/annotation-scan-not-scanning-external-jars-in-classpath).
 ```
 java -cp "zipkin-sparkstreaming-job.jar:zipkin-sparkstreaming-example-*.jar" \
   zipkin.sparkstreaming.job.ZipkinSparkStreamingJob \
@@ -42,6 +23,3 @@ java -cp "zipkin-sparkstreaming-job.jar:zipkin-sparkstreaming-example-*.jar" \
   --zipkin.storage.elasticsearch.hosts=http://127.0.0.1:9200 \
   --zipkin.sparkstreaming.stream.kafka.bootstrap-servers=127.0.0.1:9092
 ```
-
-## Why this should work..
-The spring factories thing allows spring boot to pick up and load the class you made. This is called auto-configuration... like java service loader, but better. Read more [here](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html).
